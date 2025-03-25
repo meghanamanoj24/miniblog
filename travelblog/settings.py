@@ -56,7 +56,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['miniblog-1.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['miniblog-2.onrender.com', 'localhost', '127.0.0.1']
 
 
 
