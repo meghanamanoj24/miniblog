@@ -1,13 +1,22 @@
 Django==4.2.9
+django-ckeditor==6.7.0
+django-taggit==5.0.1
+Pillow==10.2.0
 django-crispy-forms==2.1
 crispy-bootstrap4==2023.1
-django-ckeditor==6.7.0
-Pillow==10.2.0
-gunicorn==21.2.0
-whitenoise==6.6.0
-psycopg2-binary==2.9.9
-python-dotenv==1.0.1
-dj-database-url==2.1.0
-django-taggit==6.1.0
+python-dotenv>=0.19.0
+django-crontab>=0.7.1
+xlsxwriter>=3.0.0
+reportlab>=3.6.0
+django-cleanup>=6.0.0
+django-debug-toolbar>=3.2.0
 django-cors-headers==4.4.0
+whitenoise>=5.3.0
+gunicorn>=20.1.0
+psycopg2-binary>=2.9.0  # For PostgreSQL support
+django-storages>=1.12.0  # For cloud storage support
+boto3>=1.20.0  # For AWS S3 support
 uvicorn==0.33.0
+# Production dependencies
+redis==5.0.1
+sentry-sdk==1.39.1 
