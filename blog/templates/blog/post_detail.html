@@ -1,0 +1,49 @@
+<!-- Add this near the top of the post content -->
+<div class="post-meta mb-4">
+    <div class="reading-time-badge">
+        <i class="far fa-clock"></i> {{ post.reading_time }} read
+    </div>
+    <div class="post-stats">
+        <span class="mr-3">
+            <i class="fas fa-eye"></i> {{ post.views }} views
+        </span>
+        <span class="mr-3">
+            <i class="fas fa-comment"></i> {{ post.comments.count }} comments
+        </span>
+        <span>
+            <i class="fas fa-share-alt"></i> {{ post.total_shares }} shares
+        </span>
+    </div>
+</div>
+
+<!-- Add this CSS -->
+<style>
+.reading-time-badge {
+    display: inline-block;
+    background-color: #f8f9fa;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.reading-time-badge i {
+    margin-right: 5px;
+    color: #007bff;
+}
+
+.post-stats {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.post-stats i {
+    margin-right: 5px;
+}
+
+.post-meta {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+</style> 

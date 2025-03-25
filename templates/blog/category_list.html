@@ -1,0 +1,31 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Categories - Travel Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Categories</h1>
+    </div>
+    {% for category in categories %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ category.name }}</h5>
+                <p class="card-text">{{ category.description|truncatewords:30 }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{% url 'blog:category-posts' category.slug %}" class="btn btn-primary">View Posts</a>
+                    <span class="badge bg-secondary">{{ category.post_count }} posts</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No categories found.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 

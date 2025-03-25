@@ -1,0 +1,37 @@
+{% for comment in comments %}
+    <div class="comment" id="comment-{{ comment.id }}">
+        <div class="comment-content">
+            <div class="comment-header">
+                <div class="comment-author">
+                    <img src="{{ comment.author.profile.profile_pic.url }}" alt="{{ comment.author.username }}" class="comment-avatar">
+                    <span class="comment-username">{{ comment.author.username }}</span>
+                    <span class="comment-date">{{ comment.created_date|timesince }} ago</span>
+                </div>
+                {% if user == comment.author %}
+                    <div class="comment-actions">
+                        <button class="btn btn-sm btn-outline-primary edit-comment" data-comment-id="{{ comment.id }}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-comment" data-comment-id="{{ comment.id }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="comment-text">{{ comment.content }}</div>
+            <div class="comment-footer">
+                <button class="btn btn-sm btn-outline-primary like-comment" data-comment-id="{{ comment.id }}">
+                    <i class="fas fa-heart {% if user in comment.likes.all %}text-danger{% endif %}"></i>
+                    <span class="likes-count">{{ comment.likes.count }}</span>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary reply-comment" data-comment-id="{{ comment.id }}">
+                    <i class="fas fa-reply"></i> Reply
+                </button>
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <div class="no-comments">
+        <p>No comments yet. Be the first to comment!</p>
+    </div>
+{% endfor %} 

@@ -1,0 +1,65 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Contact Us - Travel Blog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h1 class="display-4 mb-4">Contact Us</h1>
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Get in Touch</h2>
+                    <p class="lead">Have questions or suggestions? We'd love to hear from you!</p>
+                    
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="subject" name="subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                    
+                    <div class="mt-5">
+                        <h3>Other Ways to Connect</h3>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <h5>Social Media</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="fab fa-facebook"></i> <a href="#" class="text-decoration-none">Facebook</a></li>
+                                    <li><i class="fab fa-twitter"></i> <a href="#" class="text-decoration-none">Twitter</a></li>
+                                    <li><i class="fab fa-instagram"></i> <a href="#" class="text-decoration-none">Instagram</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Contact Information</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-envelope"></i> contact@travelblog.com</li>
+                                    <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                                    <li><i class="fas fa-map-marker-alt"></i> 123 Travel Street, Adventure City</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

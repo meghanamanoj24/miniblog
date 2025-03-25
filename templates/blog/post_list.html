@@ -1,0 +1,194 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Blog Posts - Travel Blog{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero-section text-white py-5 mb-5 rounded">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 fw-bold">Welcome to Travel Blog</h1>
+                    <p class="lead">Share your travel adventures and experiences with fellow travelers around the world.</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'blog:post-create' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-plus"></i> Share Your Story
+                        </a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-user-plus"></i> Join Our Community
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h3>{{ total_posts }}</h3>
+                            <p>Posts</p>
+                        </div>
+                        <div class="col-4">
+                            <h3>{{ total_users }}</h3>
+                            <p>Users</p>
+                        </div>
+                        <div class="col-4">
+                            <h3>{{ total_categories }}</h3>
+                            <p>Categories</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Posts List -->
+        <div class="col-md-8">
+            {% if user.is_authenticated %}
+                <div class="mb-4">
+                    <a href="{% url 'blog:post-create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create New Post
+                    </a>
+                </div>
+            {% endif %}
+
+            {% for post in posts %}
+                <article class="card mb-4">
+                    {% if post.featured_image %}
+                        <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            <a href="{% url 'blog:post-detail' post.slug %}" class="text-decoration-none">{{ post.title }}</a>
+                        </h2>
+                        <p class="card-text text-muted">
+                            Posted by <a href="{% url 'blog:profile' post.author.username %}">{{ post.author.username }}</a> | 
+                            {{ post.created_date|date:"F d, Y" }} | 
+                            {{ post.reading_time }}
+                        </p>
+                        <p class="card-text">{{ post.content|truncatewords:50 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="{% url 'blog:post-detail' post.slug %}" class="btn btn-outline-primary">Read More</a>
+                            </div>
+                            <div>
+                                <span class="text-muted me-2">
+                                    <i class="fas fa-eye"></i> {{ post.views }}
+                                </span>
+                                <span class="text-muted">
+                                    <i class="fas fa-heart"></i> {{ post.likes.count }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <div class="alert alert-info">
+                    No posts found. {% if user.is_authenticated %}Be the first to <a href="{% url 'blog:post-create' %}" class="alert-link">create a post</a>!{% endif %}
+                </div>
+            {% endfor %}
+
+            {% if is_paginated %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Newsletter -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Subscribe to Newsletter</h5>
+                    <form method="post" action="{% url 'blog:newsletter-subscribe' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Categories</h5>
+                    <ul class="list-unstyled">
+                        {% for category in categories %}
+                            <li class="mb-2">
+                                <a href="?category={{ category.slug }}" class="text-decoration-none">
+                                    <i class="fas fa-folder"></i> {{ category.name }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Popular Tags -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Popular Tags</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for tag in popular_tags %}
+                            <a href="?tag={{ tag.slug }}" class="btn btn-outline-secondary btn-sm">
+                                #{{ tag.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Posts -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Posts</h5>
+                    <ul class="list-unstyled">
+                        {% for post in recent_posts %}
+                            <li class="mb-2">
+                                <a href="{% url 'blog:post-detail' post.slug %}" class="text-decoration-none">
+                                    {{ post.title }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

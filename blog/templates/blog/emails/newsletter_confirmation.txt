@@ -1,0 +1,10 @@
+Hello {{ name }},
+
+Thank you for subscribing to our newsletter! To complete your subscription, please click the link below:
+
+{{ confirmation_url }}
+
+If you didn't request this subscription, you can safely ignore this email.
+
+Best regards,
+{{ site_name }} 

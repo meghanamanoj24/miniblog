@@ -1,0 +1,50 @@
+{% if post.get_related_posts %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Related Posts</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for related_post in post.get_related_posts %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    {% if related_post.featured_image %}
+                    <img src="{{ related_post.featured_image.url }}" class="card-img-top" alt="{{ related_post.title }}" style="height: 150px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <a href="{{ related_post.get_absolute_url }}" class="text-decoration-none text-dark">
+                                {{ related_post.title }}
+                            </a>
+                        </h6>
+                        <p class="card-text small">
+                            <i class="fas fa-clock"></i> {{ related_post.get_reading_time }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if post.series %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">{{ post.series.title }} Series</h5>
+    </div>
+    <div class="card-body">
+        <div class="list-group">
+            {% for series_post in post.get_series_posts %}
+            <a href="{{ series_post.get_absolute_url }}" 
+               class="list-group-item list-group-item-action {% if series_post.id == post.id %}active{% endif %}">
+                {% if series_post.series_order %}Part {{ series_post.series_order }}: {% endif %}
+                {{ series_post.title }}
+                {% if series_post.id == post.id %}(Current){% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %} 

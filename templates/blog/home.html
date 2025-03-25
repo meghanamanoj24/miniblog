@@ -1,0 +1,195 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block title %}Home - Blog{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center py-5 mb-5" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://source.unsplash.com/1600x400/?travel') no-repeat center center; background-size: cover; color: white;">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">Welcome to Travel Blog</h1>
+        <p class="lead mb-4">Share your travel experiences, discover new destinations, and connect with fellow travelers.</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'blog:post-create' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-edit"></i> Share Your Story
+        </a>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-sign-in-alt"></i> Login to Share
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="container mb-5">
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-book-open fa-3x text-primary mb-3"></i>
+                    <h3>{{ posts.count }}</h3>
+                    <p class="text-muted">Travel Stories</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3>{{ users.count }}</h3>
+                    <p class="text-muted">Active Writers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-globe-americas fa-3x text-primary mb-3"></i>
+                    <h3>{{ categories.count }}</h3>
+                    <p class="text-muted">Destinations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Posts -->
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Latest Travel Stories</h2>
+        {% if user.is_authenticated %}
+        <a href="{% url 'blog:post-create' %}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Write a Story
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
+                {% else %}
+                <img src="https://source.unsplash.com/800x400/?{{ post.category.name|lower }}" class="card-img-top" alt="{{ post.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <span class="badge bg-primary mb-2">{{ post.category.name }}</span>
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text text-muted">
+                        <small>
+                            <i class="fas fa-user"></i> {{ post.author.username }} |
+                            <i class="far fa-calendar"></i> {{ post.created_date|date:"M d, Y" }}
+                        </small>
+                    </p>
+                    <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+                    <a href="{% url 'blog:post-detail' post.slug %}" class="btn btn-outline-primary">Read More</a>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="likes">
+                            <form action="{% url 'blog:like-post' post.id %}" method="POST" class="d-inline like-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-decoration-none p-0 like-button" data-liked="{% if request.user in post.likes.all %}true{% else %}false{% endif %}">
+                                    {% if request.user in post.likes.all %}
+                                    <i class="fas fa-heart text-danger"></i>
+                                    {% else %}
+                                    <i class="far fa-heart"></i>
+                                    {% endif %}
+                                    <span class="likes-count ms-2">{{ post.total_likes }}</span>
+                                </button>
+                            </form>
+                        </div>
+                        <small class="text-muted">
+                            <i class="far fa-comment"></i> {{ post.comments.count }} comments
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="lead">No stories yet. Be the first to share your travel experience!</p>
+            {% if user.is_authenticated %}
+            <a href="{% url 'blog:post-create' %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Write Your First Story
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Login to Share
+            </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle post likes
+    document.querySelectorAll('.like-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const button = this.querySelector('.like-button');
+            const likesCount = this.querySelector('.likes-count');
+            const isLiked = button.dataset.liked === 'true';
+            
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': this.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new FormData(this)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.liked !== undefined) {
+                    button.dataset.liked = (!isLiked).toString();
+                    button.querySelector('i').className = isLiked ? 'far fa-heart' : 'fas fa-heart text-danger';
+                    likesCount.textContent = data.total_likes;
+                    
+                    // Add animation
+                    button.classList.add('liked-animation');
+                    setTimeout(() => button.classList.remove('liked-animation'), 300);
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

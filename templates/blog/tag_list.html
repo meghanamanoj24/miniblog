@@ -1,0 +1,30 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Tags - Travel Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Tags</h1>
+    </div>
+    {% for tag in tags %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ tag.name }}</h5>
+                <p class="card-text">
+                    <span class="badge bg-primary">{{ tag.post_count }} posts</span>
+                </p>
+                <a href="{% url 'blog:tag-detail' tag.slug %}" class="btn btn-outline-primary">View Posts</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No tags found.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 

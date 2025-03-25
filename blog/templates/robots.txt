@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml
+
+# Disallow admin and other private URLs
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /profile/edit/
+Disallow: /search/
+
+# Allow important paths
+Allow: /posts/
+Allow: /categories/
+Allow: /tags/
+Allow: /about/
+Allow: /contact/
+
+# Crawl-delay
+Crawl-delay: 10 

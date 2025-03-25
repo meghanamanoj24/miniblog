@@ -1,0 +1,151 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-md-8">
+            <!-- Add this before the post list -->
+            <div class="sorting-controls mb-4">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Sort by: {% if current_sort == 'reading_time' %}Shortest first
+                        {% elif current_sort == '-reading_time' %}Longest first
+                        {% else %}Latest{% endif %}
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item {% if not current_sort %}active{% endif %}" href="?{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}">Latest</a>
+                        <a class="dropdown-item {% if current_sort == 'reading_time' %}active{% endif %}" href="?sort=reading_time{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Shortest first</a>
+                        <a class="dropdown-item {% if current_sort == '-reading_time' %}active{% endif %}" href="?sort=-reading_time{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Longest first</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-container">
+                {% for post in posts %}
+                    <article class="post-preview mb-4">
+                        <div class="card">
+                            {% if post.featured_image %}
+                                <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h2 class="card-title">
+                                    <a href="{{ post.get_absolute_url }}" class="text-dark">{{ post.title }}</a>
+                                </h2>
+                                <p class="card-text text-muted">
+                                    <small>
+                                        Posted by <a href="{% url 'blog:profile-detail' post.author.username %}">{{ post.author.username }}</a>
+                                        on {{ post.created_date|date:"F d, Y" }}
+                                        {% if post.category %}
+                                            in <a href="{% url 'blog:category-detail' post.category.slug %}">{{ post.category.name }}</a>
+                                        {% endif %}
+                                    </small>
+                                </p>
+                                <p class="card-text">{{ post.content|striptags|truncatewords:50 }}</p>
+                                <div class="post-meta">
+                                    <span class="mr-3">
+                                        <i class="far fa-clock"></i> {{ post.reading_time }}
+                                    </span>
+                                    <span class="mr-3">
+                                        <i class="fas fa-eye"></i> {{ post.views }} views
+                                    </span>
+                                    <span class="mr-3">
+                                        <i class="fas fa-comment"></i> {{ post.comments.count }} comments
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-share-alt"></i> {{ post.total_shares }} shares
+                                    </span>
+                                </div>
+                                <div class="tags mt-2">
+                                    {% for tag in post.tags.all %}
+                                        <a href="{% url 'blog:tagged' tag.slug %}" class="badge badge-secondary">{{ tag.name }}</a>
+                                    {% endfor %}
+                                </div>
+                                <a href="{{ post.get_absolute_url }}" class="btn btn-primary mt-3">Read More</a>
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="alert alert-info">No posts found.</div>
+                {% endfor %}
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loading-indicator" class="text-center d-none mb-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Categories Widget -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="mb-0">Categories</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        {% for category in categories %}
+                            <li>
+                                <a href="{% url 'blog:category-detail' category.slug %}" class="d-flex justify-content-between align-items-center">
+                                    {{ category.name }}
+                                    <span class="badge badge-primary badge-pill">{{ category.posts.count }}</span>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Recent Posts Widget -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="mb-0">Recent Posts</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        {% for post in recent_posts %}
+                            <li class="mb-2">
+                                <a href="{{ post.get_absolute_url }}" class="text-dark">
+                                    {{ post.title }}
+                                </a>
+                                <small class="text-muted d-block">
+                                    {{ post.created_date|date:"F d, Y" }}
+                                </small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.post-meta {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+.post-meta i {
+    margin-right: 5px;
+}
+.badge {
+    margin-right: 5px;
+}
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+.sorting-controls {
+    display: flex;
+    justify-content: flex-end;
+}
+.dropdown-item.active {
+    background-color: #007bff;
+    color: white;
+}
+</style>
+{% endblock %} 

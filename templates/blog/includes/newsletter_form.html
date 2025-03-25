@@ -1,0 +1,17 @@
+{% load crispy_forms_tags %}
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Subscribe to Our Newsletter</h5>
+    </div>
+    <div class="card-body">
+        <p class="card-text">Stay updated with our latest travel stories and tips!</p>
+        <form method="post" action="{% url 'blog:newsletter-subscribe' %}" class="newsletter-form">
+            {% csrf_token %}
+            {{ newsletter_form|crispy }}
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-envelope me-2"></i>Subscribe
+            </button>
+        </form>
+    </div>
+</div> 
